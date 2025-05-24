@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
@@ -10,6 +9,7 @@ const Header = () => {
   const navigation = [
     { name: 'Início', href: '/' },
     { name: 'O Mandato', href: '/mandato' },
+    { name: 'Leis e Projetos', href: '/leis-projetos' },
     { name: 'Procuradoria da Mulher', href: '/procuradoria' },
     { name: 'Agenda Pública', href: '/agenda' },
     { name: 'Mídia e Imprensa', href: '/midia' },

@@ -1,0 +1,196 @@
+Prompt Abrangente para IDE Cursor AI - Fase 3: Backend e Frontend de "Leis e Projetos"
+Contexto Geral para a IDE:
+"Continuamos na Fase 3 do projeto 'Plataforma Digital Deputada Zeli'. O próximo foco é a seção 'Leis e Projetos', conforme o PRD. Vamos criar a estrutura no Supabase, uma Edge Function para os dados e o componente React para exibição. As funcionalidades de IA (resumo e busca semântica) serão implementadas em uma etapa posterior."
+
+Passo 1: Definição e Criação da Estrutura de Dados no Supabase (Backend)
+
+Para a IDE (Supabase - SQL Editor):
+"Com base no PRD (Seção 4.2.4 - Leis e Projetos e Seção 5.3 - Definição da estrutura de dados), gere e execute o seguinte script SQL para criar a tabela projetos_lei no Supabase.
+
+Requisitos da Tabela projetos_lei:
+
+id: UUID, Chave Primária, default uuid_generate_v4().
+numero_lei: TEXT, Permite Nulos (pode ser um projeto ainda sem número de lei).
+titulo_projeto: TEXT, Não Nulo. Título oficial ou popular do projeto/lei.
+ementa: TEXT, Não Nulo. Descrição resumida oficial do projeto/lei.
+resumo_cidadao: TEXT, Permite Nulos. (Será preenchido pela IA posteriormente).
+status: TEXT, Não Nulo. (Valores como: 'Em Tramitação', 'Aprovado na Comissão X', 'Aprovado em Plenário', 'Sancionado', 'Vetado').
+data_apresentacao: DATE, Não Nulo. Data em que o projeto foi apresentado.
+data_sancao_aprovacao: DATE, Permite Nulos. Data da sanção (se virou lei) ou aprovação final.
+link_integra: TEXT, Permite Nulos. Link para o texto completo do projeto/lei no site da assembleia ou diário oficial.
+autor: TEXT, Não Nulo, default 'Deputada Zeli'.
+temas_relacionados: TEXT[] (Array de TEXT). Palavras-chave ou temas para busca e categorização (ex: {'saúde', 'educação', 'mulher'}).
+impacto_previsto: TEXT, Permite Nulos. Breve descrição do impacto esperado da lei/projeto.
+criado_em: TIMESTAMPTZ, Não Nulo, default NOW().
+atualizado_em: TIMESTAMPTZ, Não Nulo, default NOW().
+Segurança (Row Level Security - RLS):
+
+Habilitar RLS na tabela projetos_lei.
+Leitura pública: Todos os projetos devem ser legíveis por todos.
+CREATE POLICY "Permitir leitura pública de projetos de lei" ON public.projetos_lei FOR SELECT USING (true);
+Políticas de escrita (INSERT, UPDATE, DELETE) serão restritas a roles de gestão de conteúdo.
+SQL Completo Sugerido (para colar no SQL Editor do Supabase):
+
+SQL
+
+-- Criação da tabela projetos_lei
+CREATE TABLE public.projetos_lei (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    numero_lei TEXT,
+    titulo_projeto TEXT NOT NULL,
+    ementa TEXT NOT NULL,
+    resumo_cidadao TEXT,
+    status TEXT NOT NULL,
+    data_apresentacao DATE NOT NULL,
+    data_sancao_aprovacao DATE,
+    link_integra TEXT,
+    autor TEXT NOT NULL DEFAULT 'Deputada Zeli',
+    temas_relacionados TEXT[],
+    impacto_previsto TEXT,
+    criado_em TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    atualizado_em TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Trigger para atualizar automaticamente a coluna 'atualizado_em'
+-- Reutilizar a função trigger_set_timestamp se já criada, ou criar se não existir:
+-- CREATE OR REPLACE FUNCTION public.trigger_set_timestamp() ... (conforme definido anteriormente)
+
+CREATE TRIGGER set_timestamp_projetos_lei
+BEFORE UPDATE ON public.projetos_lei
+FOR EACH ROW
+EXECUTE FUNCTION public.trigger_set_timestamp();
+
+-- Adicionar comentários às colunas
+COMMENT ON COLUMN public.projetos_lei.numero_lei IS 'Número oficial da lei, se sancionada.';
+COMMENT ON COLUMN public.projetos_lei.titulo_projeto IS 'Título oficial ou nome popular do projeto de lei.';
+COMMENT ON COLUMN public.projetos_lei.ementa IS 'Descrição resumida oficial do projeto ou lei.';
+COMMENT ON COLUMN public.projetos_lei.resumo_cidadao IS 'Resumo do projeto em linguagem acessível ao cidadão (a ser gerado por IA).';
+COMMENT ON COLUMN public.projetos_lei.status IS 'Situação atual do projeto (ex: Em Tramitação, Aprovado, Sancionado).';
+COMMENT ON COLUMN public.projetos_lei.data_apresentacao IS 'Data de apresentação do projeto na assembleia.';
+COMMENT ON COLUMN public.projetos_lei.data_sancao_aprovacao IS 'Data de sanção (se tornou lei) ou aprovação final.';
+COMMENT ON COLUMN public.projetos_lei.link_integra IS 'Link para o texto completo ou mais detalhes no site da assembleia/diário oficial.';
+COMMENT ON COLUMN public.projetos_lei.temas_relacionados IS 'Array de temas/palavras-chave associados ao projeto.';
+
+-- Habilitar Row Level Security (RLS)
+ALTER TABLE public.projetos_lei ENABLE ROW LEVEL SECURITY;
+
+-- Política de RLS para permitir leitura pública
+CREATE POLICY "Permitir leitura pública de projetos de lei"
+ON public.projetos_lei
+FOR SELECT
+USING (true);
+
+-- Inserir dados de teste (exemplo)
+-- INSERT INTO public.projetos_lei (titulo_projeto, ementa, status, data_apresentacao, temas_relacionados) VALUES
+-- ('Projeto de Lei ABC/2024', 'Dispõe sobre o incentivo à agricultura familiar no Entorno do DF.', 'Em Tramitação', '2024-03-15', ARRAY['agricultura', 'economia local', 'entorno df']),
+-- ('Lei Ordinária XYZ/2023', 'Garante prioridade de atendimento para mulheres vítimas de violência em serviços públicos.', 'Sancionado', '2023-11-20', ARRAY['mulher', 'direitos humanos', 'segurança']),
+-- ('Projeto Indicativo 123/2024', 'Sugere ao Poder Executivo a criação de novas creches em Valparaíso.', 'Aprovado na Comissão de Educação', '2024-02-10', ARRAY['educação', 'infância', 'valparaíso']);
+Instruções adicionais para o desenvolvedor:
+
+Execute o SQL no Supabase.
+Insira dados de teste para popular a tabela.
+Verifique as políticas de RLS.
+Passo 2: Desenvolvimento da Supabase Edge Function para "Leis e Projetos"
+
+Para a IDE (Supabase Edge Function - TypeScript/Deno):
+"Crie uma nova Supabase Edge Function chamada get-projetos-lei.
+
+Lógica da Função:
+
+Similar à função get-eventos: configurar CORS, cliente Supabase.
+Obter parâmetros de query: skip, limit, status, tema (para filtrar por um tema específico dentro do array temas_relacionados).
+Construir query para projetos_lei:
+Selecionar campos relevantes.
+Aplicar filtros por status (igualdade) e tema (verificar se o array temas_relacionados contém o tema).
+Ordenar por data_apresentacao descendente.
+Aplicar paginação.
+Retornar JSON com os dados ou erro.
+Prompt para Cursor AI (Supabase Edge Function - TypeScript):
+
+TypeScript
+
+// Solicitação para supabase/functions/get-projetos-lei/index.ts
+/*
+Gere o código para uma Supabase Edge Function em TypeScript/Deno chamada 'get-projetos-lei'.
+
+A função deve:
+1.  Importar o necessário de '@supabase/supabase-js' e 'std/http/server.ts'.
+2.  Configurar CORS.
+3.  No handler:
+    a.  Criar cliente Supabase.
+    b.  Extrair query params: `skip` (default 0), `limit` (default 10), `status` (opcional), `tema` (opcional).
+    c.  Construir query para 'projetos_lei':
+        i.  Selecionar todos os campos ou os necessários para exibição.
+        ii. Se `status` fornecido, adicionar `.eq('status', status)`.
+        iii.Se `tema` fornecido, adicionar `.contains('temas_relacionados', [tema])`. (Verificar a sintaxe correta para array contains no Supabase JS client).
+        iv. Ordenar por `data_apresentacao` descendente.
+        v.  Aplicar paginação com `.range(skip, skip + limit - 1)`.
+    d.  Executar e retornar dados/erro em JSON.
+    e.  Tratar requisições OPTIONS.
+*/
+Instruções adicionais:
+
+Deploy e teste da Edge Function.
+Passo 3: Desenvolvimento do Frontend (React) - Listagem de "Leis e Projetos"
+
+Para a IDE (React - TypeScript):
+"Desenvolva a página/seção 'Leis e Projetos':
+
+Componente LeisProjetos.tsx:
+
+Crie src/pages/LeisProjetos.tsx.
+Use Header e Footer.
+Título "Leis e Projetos".
+Serviço/Hook de API:
+
+Crie WorkspaceProjetosLei para buscar de /functions/v1/get-projetos-lei.
+Use useQuery.
+Tipagem ProjetoLei:
+
+Defina a interface em src/types/projetoLei.ts (ou similar).
+Renderização dos Projetos:
+
+Em LeisProjetos.tsx, liste os projetos usando Card.
+Mostrar: titulo_projeto, numero_lei (se houver), ementa resumida, status (talvez com um Badge), data_apresentacao.
+Link para link_integra se disponível.
+Estados de isLoading e isError.
+Roteamento:
+
+Rota para /leis-projetos (ou similar) em src/App.tsx.
+Link na Header.tsx (provavelmente como subitem de "O Mandato").
+Prompt para Cursor AI (Frontend - React):
+
+TypeScript
+
+// Solicitação para src/types/projetoLei.ts
+// "Crie uma interface TypeScript 'ProjetoLei' com os campos: id, numero_lei (opcional), titulo_projeto, ementa, resumo_cidadao (opcional), status, data_apresentacao (Date ou string), data_sancao_aprovacao (Date ou string, opcional), link_integra (opcional), autor, temas_relacionados (array de string, opcional), impacto_previsto (opcional)."
+
+// Solicitação para src/services/projetosLeiService.ts (ou api.ts)
+// "Crie uma função assíncrona 'fetchProjetosLei' que use 'fetch' para o endpoint da Supabase Edge Function 'get-projetos-lei'. A função deve aceitar parâmetros opcionais para 'skip', 'limit', 'status' e 'tema', e adicioná-los como query string. Deve retornar uma Promise com um array de 'ProjetoLei'."
+
+// Solicitação para src/pages/LeisProjetos.tsx
+/*
+Crie o componente React 'LeisProjetos' em 'src/pages/LeisProjetos.tsx'.
+1.  Imports: `Header`, `Footer`, `Button`, `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `Badge`, `FileText` (ícone) de '@/components' e '@/components/ui'.
+2.  Imports: `useQuery` de '@tanstack/react-query', `WorkspaceProjetosLei` e `ProjetoLei`.
+3.  Use `useQuery` para buscar os projetos.
+4.  Renderize:
+    * `Header`.
+    * Container principal com título "Leis e Projetos".
+    * Tratamento para `isLoading` e `isError`.
+    * Se houver dados:
+        * Mapeie os projetos para componentes `Card`.
+        * Cada `Card` deve exibir:
+            * `CardHeader` com `CardTitle` (titulo_projeto) e `Badge` para `status`.
+            * `CardContent` com `CardDescription` (ementa), `data_apresentacao` formatada.
+            * Se `link_integra` existir, um `Button` variant="link" para "Ver na Íntegra".
+    * Se não houver dados, mensagem apropriada.
+    * `Footer`.
+5.  Formate as datas.
+*/
+
+// Solicitação para src/App.tsx
+// "Adicione uma nova rota para '/leis-projetos' que renderize o componente 'LeisProjetos'."
+
+// Solicitação para src/components/Header.tsx
+// "Adicione 'Leis e Projetos' como um item de navegação, possivelmente dentro de 'O Mandato', apontando para '/leis-projetos'."
