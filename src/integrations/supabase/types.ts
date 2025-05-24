@@ -9,7 +9,57 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      eventos: {
+        Row: {
+          cidade: string
+          created_at: string
+          data_fim: string | null
+          data_inicio: string
+          descricao: string | null
+          id: string
+          link_externo: string | null
+          local_endereco: string | null
+          local_nome: string
+          publico: boolean | null
+          tema: string | null
+          tipo_evento: string | null
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          cidade: string
+          created_at?: string
+          data_fim?: string | null
+          data_inicio: string
+          descricao?: string | null
+          id?: string
+          link_externo?: string | null
+          local_endereco?: string | null
+          local_nome: string
+          publico?: boolean | null
+          tema?: string | null
+          tipo_evento?: string | null
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          cidade?: string
+          created_at?: string
+          data_fim?: string | null
+          data_inicio?: string
+          descricao?: string | null
+          id?: string
+          link_externo?: string | null
+          local_endereco?: string | null
+          local_nome?: string
+          publico?: boolean | null
+          tema?: string | null
+          tipo_evento?: string | null
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
