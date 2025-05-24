@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { MapPin, Phone, MessageSquare, Users, Calendar, FileText } from 'lucide-react';
+import logoZeli from '@/assets/logo/logo_Zeli.png';
+
 const Footer = () => {
   const quickLinks = [{
     name: 'O Mandato',
@@ -42,9 +44,7 @@ const Footer = () => {
           {/* Logo and Description */}
           <div className="lg:col-span-1">
             <div className="flex items-center space-x-3 mb-4">
-              <div className="w-12 h-12 bg-zeli-yellow rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-xl">Z</span>
-              </div>
+              <img src={logoZeli} alt="Logo Dra. Zeli" className="w-12 h-12 object-contain" />
               <div>
                 <h3 className="text-xl font-bold">Deputada Zeli</h3>
                 <p className="text-sm text-gray-300">Mulher de Palavra</p>

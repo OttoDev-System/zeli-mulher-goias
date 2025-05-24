@@ -1,0 +1,34 @@
+{
+  "event_message": "Erro ao inserir evento: {\n  code: \"42501\",\n  details: null,\n  hint: null,\n  message: 'new row violates row-level security policy for table \"eventos\"'\n}\n",
+  "id": "e4da2121-0022-460c-abe7-0cadeef39572",
+  "metadata": [
+    {
+      "boot_time": null,
+      "cpu_time_used": null,
+      "deployment_id": "ajiawzsujkkqzntuvrjc_ec71e651-cb46-4c96-b4af-eb7dabe38461_3",
+      "event_type": "Log",
+      "execution_id": "5cf2b1bf-4528-4b69-9a99-79972eed304b",
+      "function_id": "ec71e651-cb46-4c96-b4af-eb7dabe38461",
+      "level": "error",
+      "memory_used": [],
+      "project_ref": "ajiawzsujkkqzntuvrjc",
+      "reason": null,
+      "region": "sa-east-1",
+      "served_by": "supabase-edge-runtime-1.67.3 (compatible with Deno v1.45.2)",
+      "timestamp": "2025-05-24T17:55:07.902Z",
+      "version": "3"
+    }
+  ],
+  "timestamp": 1748109309069158
+}
+
+####
+
+EventoForm.tsx:138 
+ POST https://ajiawzsujkkqzntuvrjc.supabase.co/functions/v1/create-evento 400 (Bad Request)
+
+EventoForm.tsx:153 Erro ao salvar evento: FunctionsHttpError: Edge Function returned a non-2xx status code
+    at FunctionsClient.<anonymous> (@supabase_supabase-j…?v=4d91b092:1395:17)
+    at Generator.next (<anonymous>)
+    at fulfilled (@supabase_supabase-j…?v=4d91b092:1314:24)
+onSubmit	@	EventoForm.tsx:153

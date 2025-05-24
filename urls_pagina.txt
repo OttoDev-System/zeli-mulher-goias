@@ -1,0 +1,20 @@
+# Rotas da Plataforma Digital Deputada Zeli
+
+## Páginas Públicas
+/                  - Página inicial (Home)
+/mandato           - Sobre o mandato
+/procuradoria      - Procuradoria da Mulher
+/agenda            - Agenda Pública (eventos)
+/leis-projetos     - Listagem de Leis e Projetos
+
+## Painel Administrativo (Acesso restrito)
+http://localhost:8080/admin/login               - Login do painel administrativo
+http://localhost:8080/admin/dashboard           - Dashboard do admin
+http://localhost:8080/admin/agenda              - Listagem e gestão de eventos (CRUD)
+http://localhost:8080/admin/agenda/novo         - Cadastro de novo evento
+/admin/agenda/editar/:id   - Edição de evento existente (substitua :id pelo ID do evento)
+
+# Observações
+- Todas as rotas /admin/* são protegidas e exigem autenticação.
+- A rota /admin/agenda/editar/:id deve ser acessada com o ID real do evento.
+- Rotas adicionais podem ser incluídas conforme expansão do sistema. 

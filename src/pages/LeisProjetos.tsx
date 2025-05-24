@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { Header } from '@/components/Header'; // Ajuste o caminho se necessário
-import { Footer } from '@/components/Footer'; // Ajuste o caminho se necessário
+import Header from '@/components/Header'; // Ajuste o caminho se necessário
+import Footer from '@/components/Footer'; // Ajuste o caminho se necessário
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
