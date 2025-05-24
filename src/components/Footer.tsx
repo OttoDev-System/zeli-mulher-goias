@@ -1,25 +1,42 @@
-
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { MapPin, Phone, MessageSquare, Users, Calendar, FileText } from 'lucide-react';
-
 const Footer = () => {
-  const quickLinks = [
-    { name: 'O Mandato', href: '/mandato', icon: Users },
-    { name: 'Leis e Projetos', href: '/leis', icon: FileText },
-    { name: 'Procuradoria da Mulher', href: '/procuradoria', icon: Users },
-    { name: 'Agenda Pública', href: '/agenda', icon: Calendar }
-  ];
-
-  const socialLinks = [
-    { name: 'Facebook', href: '#', color: 'text-blue-600' },
-    { name: 'Instagram', href: '#', color: 'text-pink-600' },
-    { name: 'Twitter', href: '#', color: 'text-blue-400' },
-    { name: 'YouTube', href: '#', color: 'text-red-600' }
-  ];
-
-  return (
-    <footer className="bg-zeli-gray text-white">
+  const quickLinks = [{
+    name: 'O Mandato',
+    href: '/mandato',
+    icon: Users
+  }, {
+    name: 'Leis e Projetos',
+    href: '/leis',
+    icon: FileText
+  }, {
+    name: 'Procuradoria da Mulher',
+    href: '/procuradoria',
+    icon: Users
+  }, {
+    name: 'Agenda Pública',
+    href: '/agenda',
+    icon: Calendar
+  }];
+  const socialLinks = [{
+    name: 'Facebook',
+    href: '#',
+    color: 'text-blue-600'
+  }, {
+    name: 'Instagram',
+    href: '#',
+    color: 'text-pink-600'
+  }, {
+    name: 'Twitter',
+    href: '#',
+    color: 'text-blue-400'
+  }, {
+    name: 'YouTube',
+    href: '#',
+    color: 'text-red-600'
+  }];
+  return <footer className="bg-zeli-gray text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Logo and Description */}
@@ -30,7 +47,7 @@ const Footer = () => {
               </div>
               <div>
                 <h3 className="text-xl font-bold">Deputada Zeli</h3>
-                <p className="text-sm text-gray-300">Atuante, forte e de palavra</p>
+                <p className="text-sm text-gray-300">Mulher de Palavra</p>
               </div>
             </div>
             <p className="text-gray-300 text-sm leading-relaxed mb-4">
@@ -43,17 +60,12 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4">Links Rápidos</h4>
             <ul className="space-y-3">
-              {quickLinks.map((link) => (
-                <li key={link.name}>
-                  <Link 
-                    to={link.href} 
-                    className="text-gray-300 hover:text-zeli-yellow transition-colors duration-200 flex items-center space-x-2"
-                  >
+              {quickLinks.map(link => <li key={link.name}>
+                  <Link to={link.href} className="text-gray-300 hover:text-zeli-yellow transition-colors duration-200 flex items-center space-x-2">
                     <link.icon className="h-4 w-4" />
                     <span>{link.name}</span>
                   </Link>
-                </li>
-              ))}
+                </li>)}
             </ul>
           </div>
 
@@ -84,19 +96,11 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4">Redes Sociais</h4>
             <div className="grid grid-cols-2 gap-3">
-              {socialLinks.map((social) => (
-                <Button
-                  key={social.name}
-                  variant="outline"
-                  size="sm"
-                  className="border-gray-600 text-gray-300 hover:bg-zeli-yellow hover:text-white hover:border-zeli-yellow"
-                  asChild
-                >
+              {socialLinks.map(social => <Button key={social.name} variant="outline" size="sm" className="border-gray-600 text-gray-300 hover:bg-zeli-yellow hover:text-white hover:border-zeli-yellow" asChild>
                   <a href={social.href} target="_blank" rel="noopener noreferrer">
                     {social.name}
                   </a>
-                </Button>
-              ))}
+                </Button>)}
             </div>
             
             <div className="mt-6">
@@ -126,8 +130,6 @@ const Footer = () => {
           </div>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
